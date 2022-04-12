@@ -1,13 +1,14 @@
 from flask_restful import Resource
 from flask import request
+from main.models import UsuarioModel
 
-#Diccionario de prueba
+
 USUARIOS = {
     1: {'firstname': 'Pedro', 'lastname': 'Marco'},
     2: {'firstname': 'Leandro', 'lastname': 'Sosa'},
 }
 
-#Recurso Profesor
+
 class Usuario(Resource):
     def get(self, id):
         if int(id) in USUARIOS:
@@ -32,12 +33,10 @@ class Usuario(Resource):
 
 
 class Usuarios(Resource):
-    #Obtener lista de recursos
     def get(self):
         return USUARIOS
-    #Insertar recurso
+
     def post(self):
-        #Obtener datos de la solicitud
         usuario = request.get_json()
         id = int(max(USUARIOS.keys())) + 1
         USUARIOS[id] = usuario

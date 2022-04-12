@@ -1,13 +1,13 @@
 from flask_restful import Resource
 from flask import request
 
-#Diccionario de prueba
+
 POEMAS = {
     1: {'titulo': 'La Rosa',},
     2: {'titulo': 'Martin Fierro',},
 }
 
-#Recurso Profesor
+
 class Poema(Resource):
     def get(self, id):
         if int(id) in POEMAS:
@@ -29,7 +29,7 @@ class Poema(Resource):
             return poema, 201
         return '', 404
 
-#Recurso Profesores
+
 class Poemas(Resource):
     def get(self):
         return POEMAS
