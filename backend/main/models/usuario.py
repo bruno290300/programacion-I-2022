@@ -6,17 +6,24 @@ class Usuario(db.Model):
     email = db.Column(db.String(100), nullable=False)
     contraseña = db.Column(db.String(100), nullable=False)
     rol = db.Column(db.String(100), nullable=False)
+
+    poema = db.relationship("Usuario", back_populates="poema", cascade="all, delete-orphan")
+    calificacion = db.relationship("Usuario", back_populates="calificacion", cascade="all, delete-orphan")
     def __repr__(self):
         return '<Usuario: %r %r %r %r>' % (self.nombre, self.email, self.contraseña, self.rol)
 
     #Convertir objeto en JSON
     def to_json(self):
+        self.poema = db.session.query(PoemaModel).get_or_404(self.poemaId)
+        self.calificacion = db.session.query(CalificacionModel).get_or_404(self.calificacionId)
         usuario_json = {
             'id': self.id,
             'nombre': str(self.nombre),
             'email': str(self.email),
             'contraseña': str(self.contraseña),
             'rol': str(self.rol),
+            'poema': self.poema.to_json(),
+            'calificacion': self.calificacion.to_json()
 
         }
         return usuario_json
