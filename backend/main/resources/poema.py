@@ -75,9 +75,9 @@ class Poemas(Resource):
                     if value == "fecha_hora[desc]":
                         poemas = poemas.order_by(PoemaModel.fecha_hora.desc())
                     if value == "calificaciones":
-                        poemas = poemas.outerjoin(PoemaModel.calificaciones).group_by(PoemaModel.id).order_by(func.avg(PoemaModel.resultado))
+                        poemas = poemas.outerjoin(PoemaModel.calificaciones).group_by(PoemaModel.id).order_by(func.mean(PoemaModel.resultado))
                     if value == "calificaciones[desc]":
-                        poemas = poemas.outerjoin(PoemaModel.calificaciones).group_by(PoemaModel.id).order_by(func.avg(PoemaModel.resultado).desc())
+                        poemas = poemas.outerjoin(PoemaModel.calificaciones).group_by(PoemaModel.id).order_by(func.mean(PoemaModel.resultado).desc())
         
         
         poemas = poemas.paginate(page, per_page, False, 30)

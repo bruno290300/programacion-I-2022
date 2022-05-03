@@ -73,7 +73,7 @@ class Calificaciones(Resource):
                 
         calificaciones = calificaciones.paginate(page, per_page, False, 30)
         return jsonify({
-            "poemas" : [calificaciones.to_json_short() for calificacion in calificaciones.items],
+            "poemas" : [calificacion.to_json() for calificacion in calificaciones.items],
             "total" : calificaciones.total,
             "pages" : calificaciones.pages,
             "page" : page

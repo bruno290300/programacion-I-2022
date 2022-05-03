@@ -22,7 +22,7 @@ class Calificacion(db.Model):
             'puntaje': str(self.puntaje),
             'comentario': str(self.comentario),
             'usuarioId': self.usuario.to_json(),
-            'poemaId': self.poema.to_json()
+            'poemaId': self.poema.to_json_short()
             
         }
         return calificacion_json
