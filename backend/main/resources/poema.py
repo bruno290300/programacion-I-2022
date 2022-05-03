@@ -2,14 +2,10 @@ from flask_restful import Resource
 from flask import request, jsonify
 from .. import db
 from main.models import PoemaModel
+import datetime
+from sqlalchemy import func
 
 
-'''
-POEMAS = {
-    1: {'titulo': 'La Rosa',},
-    2: {'titulo': 'Martin Fierro',},
-}
-'''
 
 
 class Poema(Resource):
@@ -36,9 +32,61 @@ class Poema(Resource):
 
 class Poemas(Resource):
     def get(self):
-        poemas = db.session.query(PoemaModel).all()
-        return jsonify([poema.to_json_short() for poema in poemas])
+        #poemas = db.session.query(PoemaModel).all()
+        #return jsonify([poema.to_json_short() for poema in poemas])
 
+        page = 1
+
+        per_page = 10
+
+        poemas = db.session.query(PoemaModel)
+
+
+        if request.get_json():
+            filters = request.get_json().items()
+            for key, value in filters:
+                
+                # Paginate
+                if key == "page":
+                    page = int(value)
+                if key == "per_page":
+                    per_page = int(value)
+                
+                if key == "titulo":
+                    poemas = poemas.filter(PoemaModel.titulo.like('%'+value+'%'))
+
+                if key == "usuario":
+                    poemas = poemas.filter(PoemaModel.usuario == value)
+                #fecha
+                if key == "created[gt]":
+                    poemas = poemas.filter(PoemaModel.fecha_hora >= datetime.strptime(value, '%d-%m-%Y'))
+                if key == "created[lt]":
+                    poemas = poemas.filter(PoemaModel.fecha_hora <= datetime.strptime(value, '%d-%m-%Y'))
+                
+                
+                # Order
+                if key == "sort_by":
+                    if value == "usuario":
+                        poemas = poemas.order_by(PoemaModel.usuario)
+                    if value == "usuario[desc]":
+                        poemas = poemas.order_by(PoemaModel.usuario.desc())
+                    if value == "fecha_hora":
+                        poemas == poemas.order_by(PoemaModel.fecha_hora)
+                    if value == "fecha_hora[desc]":
+                        poemas = poemas.order_by(PoemaModel.fecha_hora.desc())
+                    if value == "calificaciones":
+                        poemas = poemas.outerjoin(PoemaModel.calificaciones).group_by(PoemaModel.id).order_by(func.avg(PoemaModel.resultado))
+                    if value == "calificaciones[desc]":
+                        poemas = poemas.outerjoin(PoemaModel.calificaciones).group_by(PoemaModel.id).order_by(func.avg(PoemaModel.resultado).desc())
+        
+        
+        poemas = poemas.paginate(page, per_page, False, 30)
+        return jsonify({
+            "poemas" : [poema.to_json_short() for poema in poemas.items],
+            "total" : poemas.total,
+            "pages" : poemas.pages,
+            "page" : page
+            })
 
 
     def post(self):

@@ -1,7 +1,8 @@
-from .. import db
 from datetime import datetime
-from sqlalchemy.sql import func
-
+from email.policy import default
+from sqlalchemy import column
+from .. import db
+from sqlalchemy import func
 
 class Poema(db.Model):
     id = db.Column(db.Integer, primary_key=True)

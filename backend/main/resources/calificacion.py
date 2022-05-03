@@ -5,13 +5,6 @@ from main.models import CalificacionModel
 
 
 
-'''
-CALIFICACIONES = {
-    1: {'calificacion': '5',},
-    2: {'calificacion': '6',},
-}
-'''
-
 
 class Calificacion(Resource):
     def get(self, id):
@@ -37,8 +30,56 @@ class Calificacion(Resource):
 
 class Calificaciones(Resource):
     def get(self):
-        calificaciones = db.session.query(CalificacionModel).all()
-        return jsonify([calificacion.to_json() for calificacion in calificaciones])
+        #calificaciones = db.session.query(CalificacionModel).all()
+        #return jsonify([calificacion.to_json() for calificacion in calificaciones])
+        page = 1
+        per_page = 10
+        calificaciones = db.session.query(CalificacionModel)
+
+
+        if request.get_json():
+            filters = request.get_json().items()
+            for key, value in filters:
+
+                #paginate
+                if key == "page":
+                    page = int(value)
+                if key == "per_page":
+                    per_page = int(value)
+                if key == "puntaje":
+                    puntaje = puntaje.filter(CalificacionModel.puntaje == value)
+                if key == "comentario":
+                    comentario = comentario.filter(CalificacionModel.comentario.like("%" + value + "%"))
+                if key == "usuario":
+                    usuarioId = usuarioId.filter(CalificacionModel.usuarioId == value)
+                if key == "poema":
+                    poemaId = poemaId.filter(CalificacionModel.poemaId == value)
+                
+                #Order
+                if key == "sort_by":
+                    if value == "puntaje":
+                        puntaje = puntaje.order_by(CalificacionModel.puntaje)
+                    if value == "puntaje[desc]":
+                        puntaje = puntaje.order_by(CalificacionModel.puntaje.desc())
+                    if value == "usuario":
+                        usuario = usuario.order_by(CalificacionModel.usuarioId)
+                    if value == "usuario[des]":
+                        usuario = usuario.order_by(CalificacionModel.usuarioId.desc())
+                    if value == "poema":
+                        poema = poema.order_by(CalificacionModel.poemaId)
+                    if value == "poema[des]":
+                        poema = poema.order_by(CalificacionModel.poemaId.desc())
+                        
+                
+        calificaciones = calificaciones.paginate(page, per_page, False, 30)
+        return jsonify({
+            "poemas" : [calificaciones.to_json_short() for calificacion in calificaciones.items],
+            "total" : calificaciones.total,
+            "pages" : calificaciones.pages,
+            "page" : page
+            
+            })        
+
 
 
 
