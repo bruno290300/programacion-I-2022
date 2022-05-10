@@ -1,3 +1,5 @@
+'''
+
 from .. import jwt
 from flask import jsonify
 from flask_jwt_extended import verify_jwt_in_request, get_jwt
@@ -34,3 +36,5 @@ def add_claims_to_access_token(usuario):
         'email': usuario.email
     }
     return claims
+
+'''

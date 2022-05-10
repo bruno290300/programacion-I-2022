@@ -1,3 +1,5 @@
+
+'''
 from flask import request, jsonify, Blueprint
 from .. import db
 from main.models import ProfessorModel
@@ -44,4 +46,4 @@ def register():
             return str(error), 409
         return usuario.to_json() , 201
 
-
+'''

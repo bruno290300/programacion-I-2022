@@ -36,8 +36,8 @@ class Calificacion(db.Model):
             'contraseña': str(self.contraseña),
             'rol': str(self.rol),
             'email': str(self.email),
-            'poema':poema,
-            'usuario':usuario
+            'poema': poema,
+            'usuario': usuario
         }
         
         return calificacion_json

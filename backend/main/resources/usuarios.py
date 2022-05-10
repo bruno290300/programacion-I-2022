@@ -2,8 +2,8 @@ from flask_restful import Resource
 from flask import request, jsonify
 from .. import db
 from main.models import UsuarioModel
-from flask_jwt_extended import jwt_required, get_jwt_identity
-from main.auth.decoradores import admin_required
+#from flask_jwt_extended import jwt_required, get_jwt_identity
+#from main.auth.decoradores import admin_required
 
 
 
@@ -16,19 +16,19 @@ USUARIOS = {
 
 
 class Usuario(Resource):
-    @jwt_required()
+    #@jwt_required()
     def get(self, id):
         usuarios = db.session.query(UsuarioModel).get_or_404(id)
         return usuarios.to_json()
 
-    @admin_required
+    #@admin_required
     def delete(self, id):
         usuarios = db.session.query(UsuarioModel).get_or_404(id)
         db.session.delete(usuarios)
         db.session.commit()
         return '', 204
 
-    @jwt_required()
+    #@jwt_required()
     def put(self, id):
         usuarios = db.session.query(UsuarioModel).get_or_404(id)
         data = request.get_json().items()
@@ -41,7 +41,7 @@ class Usuario(Resource):
 
 
 class Usuarios(Resource):
-    @jwt_required()
+    #@jwt_required()
     def get(self):
 
         page = 1
