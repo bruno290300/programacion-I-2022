@@ -12,7 +12,7 @@ def admin_required(fn):
         #Obtener claims de adentro del JWT
         claims = get_jwt()
         #Verificar que el rol sea admin
-        if claims['role'] =="admin" :
+        if claims['rol'] =="admin" :
             #Ejecutar función
             return fn(*args, **kwargs)
         else:

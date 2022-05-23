@@ -20,6 +20,7 @@ class Usuario(db.Model):
     @plain_password.setter
     def plain_password(self, contraseña):
         self.contraseña = generate_password_hash(contraseña)
+        print(self.contraseña)
 
     # Método que compara una contraseña en texto plano con el hash guardado en la db
     def validate_pass(self, contraseña):

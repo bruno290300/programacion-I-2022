@@ -133,6 +133,7 @@ class Poemas(Resource):
     def post(self):
         id_usuario = get_jwt_identity()
         poema = PoemaModel.from_json(request.get_json())
+        #print(poema.promedio_puntaje())
         usuario = db.session.query(UsuarioModel).get_or_404(id_usuario)
         claims = get_jwt()
         if "rol" in claims:
