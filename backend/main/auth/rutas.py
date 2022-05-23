@@ -1,19 +1,21 @@
-
-'''
 from flask import request, jsonify, Blueprint
 from .. import db
-from main.models import ProfessorModel
+from main.models import UsuarioModel
 from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
 
 
 auth = Blueprint('auth', __name__, url_prefix='/auth')
+
 @auth.route('/login', methods=['POST'])
 
 
 def login():
 
     usuario = db.session.query(UsuarioModel).filter(UsuarioModel.email == request.get_json().get("email")).first_or_404()
+    print(request.get_json().get("contraseña"))
+    
     if usuario.validate_pass(request.get_json().get("contraseña")):
+        
 
         access_token = create_access_token(identity=usuario)
 
@@ -46,4 +48,4 @@ def register():
             return str(error), 409
         return usuario.to_json() , 201
 
-'''
+

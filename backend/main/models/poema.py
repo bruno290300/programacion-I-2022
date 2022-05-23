@@ -24,6 +24,7 @@ class Poema(db.Model):
 
     def promedio_puntaje(self):
         lista_calificacion = []
+        
         if len(self.calificaciones) == 0:
             mean = 0
         else:

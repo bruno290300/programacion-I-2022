@@ -16,14 +16,14 @@ class Usuario(db.Model):
         raise AttributeError('Password cant be read')
 
     # Setter de la contraseña toma un valor en texto plano
-    # calcula el hash y lo guarda en el atributo password
+    # calcula el hash y lo guarda en el atributo contraseña
     @plain_password.setter
-    def plain_password(self, password):
-        self.password = generate_password_hash(password)
+    def plain_password(self, contraseña):
+        self.contraseña = generate_password_hash(contraseña)
 
     # Método que compara una contraseña en texto plano con el hash guardado en la db
-    def validate_pass(self, password):
-        return check_password_hash(self.password, password)
+    def validate_pass(self, contraseña):
+        return check_password_hash(self.contraseña, contraseña)
 
     def __repr__(self):
         return '<Usuario: %r %r %r %r>' % (self.nombre, self.email, self.contraseña, self.rol)
@@ -33,10 +33,10 @@ class Usuario(db.Model):
         usuario_json = {
             'id': self.id,
             'nombre': str(self.nombre),
-            'email': str(self.email),
-            'contraseña': str(self.contraseña),
-            'rol': str(self.rol),
-
+            'num_poemas': len(self.poemas),
+            'num_calificaciones': len(self.calificaciones),
+            'poemas':[poema.to_json_short() for poema in self.poemas],
+            
         }
         return usuario_json
 
@@ -44,7 +44,7 @@ class Usuario(db.Model):
         usuario_json = {
             'id': self.id,
             'nombre': str(self.nombre)
-
+            
         }
         return usuario_json
 
@@ -54,7 +54,7 @@ class Usuario(db.Model):
         usuario_json = {
             'id': self.id,
             'name': str(self.name),
-            'password': str(self.password),
+            'contraseña': str(self.contraseña),
             'rol': str(self.rol),
             'email': str(self.email),
             'poemas':poemas,
@@ -75,6 +75,6 @@ class Usuario(db.Model):
         return Usuario(id=id,
                     nombre=nombre,
                     email=email,
-                    contraseña=contraseña,
+                    plain_password=contraseña,
                     rol=rol,
                     )

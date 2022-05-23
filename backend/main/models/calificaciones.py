@@ -13,7 +13,7 @@ class Calificacion(db.Model):
 
 
     def __repr__(self):
-        return '< Poema: %r %r >' % (self.puntaje, self.comentario, self.usuarioId, self.poemaId)
+        return '< Calificacion: %r %r >' % (self.puntaje, self.comentario, self.usuarioId, self.poemaId)
     
 
     def to_json(self):
