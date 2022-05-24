@@ -48,6 +48,7 @@ def poeta_required(fn):
 @jwt.user_identity_loader
 def user_identity_lookup(usuario):
     #Definir ID como atributo identificatorio
+    print(usuario.id)
     return usuario.id
 
 #Define que atributos se guardarán dentro del token

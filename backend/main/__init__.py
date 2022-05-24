@@ -38,12 +38,15 @@ def create_app():
     #Cargar clave secreta
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
     #Cargar tiempo de expiración de los tokens
+
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = int(os.getenv('JWT_ACCESS_TOKEN_EXPIRES'))
+
     jwt.init_app(app)
+
 
     from main.auth import rutas
     #Importar blueprint
-    app.register_blueprint(auth.rutas.auth)
+    app.register_blueprint(rutas.auth)
 
 
     return app

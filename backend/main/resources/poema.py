@@ -9,12 +9,12 @@ from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 
 
 class Poema(Resource):
-    @jwt_required
+    @jwt_required()
     def get(self, id):
         poema = db.session.query(PoemaModel).get_or_404(id)
         return poema.to_json()
 
-    @jwt_required
+    @jwt_required()
     def delete(self, id):
         claims = get_jwt()
         id_usuario = get_jwt_identity()
@@ -129,10 +129,12 @@ class Poemas(Resource):
                 })
             
 
-    @jwt_required
+    @jwt_required()
     def post(self):
         id_usuario = get_jwt_identity()
+        print("poema")
         poema = PoemaModel.from_json(request.get_json())
+        print("poema")
         #print(poema.promedio_puntaje())
         usuario = db.session.query(UsuarioModel).get_or_404(id_usuario)
         claims = get_jwt()
@@ -141,6 +143,7 @@ class Poemas(Resource):
                 if len(usuario.poemas) == 0 or len(usuario.calificaciones) >= 2:
                     poema.usuario_id = id_usuario
                     db.session.add(poema)
+                    print("aaa")
                     db.session.commit()
                     return poema.to_json(), 201
                 else:

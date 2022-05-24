@@ -26,14 +26,14 @@ class Poema(db.Model):
         lista_calificacion = []
         
         if len(self.calificaciones) == 0:
-            mean = 0
+            mean1 = 0
         else:
             for calificacion in self.calificaciones:
                 puntaje = calificacion.puntaje
                 lista_calificacion.append(puntaje)
-            mean = statistics.mean(lista_calificacion)
+            mean1 = mean(lista_calificacion)
             
-        return mean
+            return mean1
 
 
     def to_json(self):
@@ -42,10 +42,10 @@ class Poema(db.Model):
             'id': self.id,
             'titulo': str(self.titulo),
             'cuerpo': str(self.cuerpo),
-            #'usuario': self.usuario.to_json(),
+            'usuario': self.usuario.to_json(),
             'fecha_hora': str(self.fecha_hora.strftime("%d-%m-%Y")),
-            #'calificaciones': [calificacion.to_json() for calificacion in self.calificaciones],
-            #'promedio_calificacion': self.promedio_puntaje()
+            'calificaciones': [calificacion.to_json() for calificacion in self.calificaciones],
+            'promedio_calificacion': self.promedio_puntaje()
         }
         return poema_json
 

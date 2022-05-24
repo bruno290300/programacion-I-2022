@@ -8,12 +8,12 @@ from main.auth.decoradores import admin_required, admin_required_or_poeta_requir
 
 
 class Calificacion(Resource):
-    @jwt_required
+    @jwt_required()
     def get(self, id):
         calificacion = db.session.query(CalificacionModel).get_or_404(id)
         return calificacion.to_json()
 
-    @jwt_required
+    @jwt_required()
     def delete(self, id):
         claims = get_jwt()
         id_usuario = get_jwt_identity()
@@ -27,7 +27,7 @@ class Calificacion(Resource):
                 return "Este usuario no está autorizado para realizar esta acción."
         
 
-    @jwt_required
+    @jwt_required()
     def put(self, id):
         id_usuario = get_jwt_identity()
         calificacion = db.session.query(CalificacionModel).get_or_404(id)
@@ -44,7 +44,7 @@ class Calificacion(Resource):
 
 
 class Calificaciones(Resource):
-    @jwt_required
+    @jwt_required()
     def get(self):
         calificaciones = db.session.query(CalificacionModel).all()
         return jsonify([calificacion.to_json() for calificacion in calificaciones])
