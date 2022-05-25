@@ -120,21 +120,21 @@ class Poemas(Resource):
                     "page" : page
                     })
         
-        else:
-            return jsonify({
-                "poemas" : [poema.to_json_short() for poema in poemas.items],
-                "total" : poemas.total,
-                "pages" : poemas.pages,
-                "page" : page
-                })
+            else:
+                return jsonify({
+                    "poemas" : [poema.to_json_short() for poema in poemas.items],
+                    "total" : poemas.total,
+                    "pages" : poemas.pages,
+                    "page" : page
+                    })
             
 
     @jwt_required()
     def post(self):
         id_usuario = get_jwt_identity()
-        print("poema")
+        
         poema = PoemaModel.from_json(request.get_json())
-        print("poema")
+        
         #print(poema.promedio_puntaje())
         usuario = db.session.query(UsuarioModel).get_or_404(id_usuario)
         claims = get_jwt()

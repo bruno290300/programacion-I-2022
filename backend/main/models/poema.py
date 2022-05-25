@@ -44,8 +44,8 @@ class Poema(db.Model):
             'cuerpo': str(self.cuerpo),
             'usuario': self.usuario.to_json(),
             'fecha_hora': str(self.fecha_hora.strftime("%d-%m-%Y")),
-            'calificaciones': [calificacion.to_json() for calificacion in self.calificaciones],
-            'promedio_calificacion': self.promedio_puntaje()
+            #'calificaciones': [calificacion.to_json() for calificacion in self.calificaciones],
+            #'promedio_calificacion': self.promedio_puntaje()
         }
         return poema_json
 
