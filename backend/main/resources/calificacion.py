@@ -1,7 +1,8 @@
+from xmlrpc.client import TRANSPORT_ERROR
 from flask_restful import Resource
 from flask import request, jsonify
 from .. import db
-from main.models import CalificacionModel
+from main.models import CalificacionModel, UsuarioModel
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from main.auth.decoradores import admin_required, admin_required_or_poeta_required, poeta_required
 from flask_mail import Mail
@@ -62,19 +63,18 @@ class Calificaciones(Resource):
     def post(self):
         id_usuario = get_jwt_identity()
         calificacion = CalificacionModel.from_json(request.get_json())
-        usuario_cal = db.session.query(ModeloUsuario).get(id_usuario)
+        usuario_calificacion = db.session.query(UsuarioModel).get(id_usuario)
         claims = get_jwt()
 
         if "rol" in claims:
             if claims['rol'] == "poeta":
-                try:
-                    calificacion.usuarioId = int(id_usuario)
-                    db.session.add(calificacion)
-                    db.session.commit()
-                    sent = sendMail([calificacion.poema.usuario.email],"Has recibido una calificación",'calificado',usuario_cal = usuario_cal, usuario = calificacion.poema.usuario, poema=calificacion.poema)
-                except Exception as error:
-                    db.session.rollback()
-                    return str(error), 409
+                
+                calificacion.usuarioId = int(id_usuario)
+                db.session.add(calificacion)
+                db.session.commit()
+                sent = sendMail([calificacion.poema.usuario.email],"Has recibido una calificación",'register',usuario_calificacion = usuario_calificacion, 
+                usuario = calificacion.poema.usuario, poema=calificacion.poema)
+
                 return calificacion.to_json(), 201
             else:
                 return "Este usuario no está autorizado para realizar esta acción."

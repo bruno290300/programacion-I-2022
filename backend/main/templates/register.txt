@@ -1,3 +1,11 @@
-Bienvenido {{usuario.nombre}} a nuestro foro de poemas!
+Bienvenido {{usuario.nombre}} tu {{poema.titulo}} ha obtenido una calificacion!
 
-Felicitaciones! Fuiste seleccionado para ser {{usuario.rol}} en nuestra exclusiva pagina!
+{{usuario_calificacion.nombre}} lo ha calificado.
+
+Gracias por registrarte en nuestro sistema.
+
+Con nuestro servicio podras:
+
+- Cargar tus proyectos
+- Eliminar proyectos
+- Buscar proyectos

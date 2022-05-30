@@ -1,3 +1,0 @@
-{{usuario.nombre}} tu poema "{{poema.titulo}}" fue calificado.!
-
-{{usuario1.nombre}} realizo un comentario!
