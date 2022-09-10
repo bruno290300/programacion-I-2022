@@ -18,17 +18,17 @@
         <i class="fa-solid fa-book"></i>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <!--</button>
+         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item dropdown">
               <a class="nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="fas fa-user-circle contrast fs-2 me-3"></i>
-              </a>
+                  <i class="fas fa-user-circle contrast fs-2 me-3"></i> 
+              </a> -->
               
             
             <li class="nav-item">
-              <a class="nav-link" href="subir_poema.html">subir poema</a>
+              <!-- <a class="nav-link" href="subir_poema.html">subir poema</a> -->
             </li>
             <li class="nav-item">
           </ul>
@@ -43,8 +43,8 @@
         <div class="d-flex justify-content-center mt-4">
             <div class="col-md-4 bg-light p-4 rounded ">
                 
-                  <form class="pt-3" action="{{ url_for('main.login') }}" method="POST">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                  <form class="pt-3" action="{{ url_for('app.mi_perfil') }}" method="POST">
+                    
                     <div class="mb-3">
                       
                     </div>
