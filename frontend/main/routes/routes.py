@@ -1,7 +1,9 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, make_response
+import requests
+import json
+
 
 app = Blueprint('app', __name__, url_prefix='/')
-
 
 @app.route('/')
 def index():
@@ -10,8 +12,21 @@ def index():
 
 @app.route('/login')
 def login():
-    return render_template('login.html')
+    api_url = "http://127.0.0.1:5000/auth/login"
+    data = {"email": "rosales@gmail.com", "contraseña": "6666"}
+    headers = {"Content-Type": "application/json"}
+    response = requests.post(api_url, json=data, headers=headers)
+    print(response.status_code)
+    print(response.text)
 
+    token = json.loads(response.text)
+    token = token["access_token"]
+    print(token)
+
+    resp = make_response(render_template("login.html"))
+    resp.set_cookie("acess_token",token)
+
+    return resp
 
 @app.route('/register')
 def register():
