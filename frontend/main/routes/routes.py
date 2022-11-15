@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, make_response
+from flask import Flask, Blueprint, current_app, render_template, make_response, request, redirect, url_for
 import requests
 import json
 
@@ -7,26 +7,46 @@ app = Blueprint('app', __name__, url_prefix='/')
 
 @app.route('/')
 def index():
+    api_url = "http://127.0.0.1:5000/poemas"
+    data = { "page": 1, "per_page": 10 }
+    headers = { "Content-Type": "application/json", "Authorization": f'Bearer {request.cookies.get("jwt")}' }
+    response = requests.get(api_url, json=data, headers=headers)
+    print(response.status_code)  
+    print(response.text)
+    poemas = json.loads(response.text)
+    print(poemas)
     return render_template('vista_principal.html')
 
 
-@app.route('/login')
+
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    api_url = "http://127.0.0.1:5000/auth/login"
-    data = {"email": "rosales@gmail.com", "contraseña": "6666"}
-    headers = {"Content-Type": "application/json"}
-    response = requests.post(api_url, json=data, headers=headers)
-    print(response.status_code)
-    print(response.text)
+    if request.method == 'POST':
+        email = request.form.get('correo')
+        password = request.form.get('contraseña')
+        print(email)
+        print(password)
+        api_url = "http://127.0.0.1:5000/auth/login"
+        data = {"email": email, "contraseña": password}
+        headers = {"Content-Type": "application/json"}
+        response = requests.post(api_url, json=data, headers=headers)
+        print(response.status_code)
+        print(response.text)
 
-    token = json.loads(response.text)
-    token = token["access_token"]
-    print(token)
+        token = json.loads(response.text)
+        token = token["access_token"]
+        print(token)
+        resp = make_response(render_template("vista_principal.html"))
 
-    resp = make_response(render_template("login.html"))
-    resp.set_cookie("acess_token",token)
+        resp.set_cookie("jwt",token)
 
-    return resp
+        return resp
+
+    else:
+        return render_template('login.html')
+
+    
 
 @app.route('/register')
 def register():

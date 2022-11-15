@@ -110,7 +110,7 @@ class Poemas(Resource):
             
 
         
-        poemas = poemas.paginate(page, per_page, False, 30)
+        poemas = poemas.paginate(page= page, per_page=per_page, error_out=False,)
         if "rol" in claims:
             if claims["rol"] == "admin":
                 return jsonify({
