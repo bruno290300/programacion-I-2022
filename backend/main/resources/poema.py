@@ -53,64 +53,64 @@ class Poemas(Resource):
 
         identify_usuario = get_jwt_identity()
 
-        if identify_usuario:
-            if request.get_json():
-                filters = request.get_json().items()
-                for key, value in filters:
-                    if key =="page":
-                        page = int(value)
-                    if key == "per_page":
-                        per_page = int(value)
-            poemas = db.session.query(PoemaModel).filter(PoemaModel.usuarioId != identify_usuario)
-            poemas = poemas.outerjoin(PoemaModel.calificaciones).group_by(PoemaModel.id).order_by(func.count(PoemaModel.calificaciones))
+        # #if identify_usuario:
+        #     #if request.get_json():
+        #         #filters = request.get_json().items()
+        #         #for key, value in filters:
+        #             #if key =="page":
+        #                 page = int(value)
+        #             if key == "per_page":
+        #                 per_page = int(value)
+        #     poemas = db.session.query(PoemaModel).filter(PoemaModel.usuarioId != identify_usuario)
+        #     poemas = poemas.outerjoin(PoemaModel.calificaciones).group_by(PoemaModel.id).order_by(func.count(PoemaModel.calificaciones))
 
 
-        else:
-            if request.get_json():
-                filters = request.get_json().items()
+        #else:
+        if request.get_json():
+            filters = request.get_json().items()
 
-                for key, value in filters:
-                
-                # Paginate
-                
-                    if key == "page":
-                        page = int(value)
-                    if key == "per_page":
-                        per_page = int(value)
-                
-                    if key == "titulo":
-                        poemas = poemas.filter(PoemaModel.titulo.like('%'+value+'%'))
+            for key, value in filters:
+            
+            # Paginate
+            
+                if key == "page":
+                    page = int(value)
+                if key == "per_page":
+                    per_page = int(value)
+            
+                if key == "titulo":
+                    poemas = poemas.filter(PoemaModel.titulo.like('%'+value+'%'))
 
-                    if key == "usuarioId":
-                        poemas = poemas.filter(PoemaModel.usuarioId == value)
-                #fecha
-                    if key == "fecha_hora[gt]":
-                        poemas = poemas.filter(PoemaModel.fecha_hora >= datetime.strptime(value, '%d-%m-%Y'))
-                    if key == "fecha_hora[lt]":
-                        poemas = poemas.filter(PoemaModel.fecha_hora <= datetime.strptime(value, '%d-%m-%Y'))
-                
-                    if key == 'username':
-                        poemas = poemas.username(PoemaModel.usuario.has(UsuarioModel.username.like('%'+value+'%')))
-                
-                # Order
-                    if key == "sort_by":
-                        if value == "usuario":
-                            poemas = poemas.order_by(PoemaModel.usuario)
-                        if value == "usuario[desc]":
-                            poemas = poemas.order_by(PoemaModel.usuario.desc())
-                        if value == "fecha_hora":
-                            poemas == poemas.order_by(PoemaModel.fecha_hora)
-                        if value == "fecha_hora[desc]":
-                            poemas = poemas.order_by(PoemaModel.fecha_hora.desc())
-                        if value == "calificaciones":
-                            poemas = poemas.outerjoin(PoemaModel.calificaciones).group_by(PoemaModel.id).order_by(func.mean(PoemaModel.resultado))
-                        if value == "calificaciones[desc]":
-                            poemas = poemas.outerjoin(PoemaModel.calificaciones).group_by(PoemaModel.id).order_by(func.mean(PoemaModel.resultado).desc())
+                if key == "usuarioId":
+                    poemas = poemas.filter(PoemaModel.usuarioId == value)
+            #fecha
+                if key == "fecha_hora[gt]":
+                    poemas = poemas.filter(PoemaModel.fecha_hora >= datetime.strptime(value, '%d-%m-%Y'))
+                if key == "fecha_hora[lt]":
+                    poemas = poemas.filter(PoemaModel.fecha_hora <= datetime.strptime(value, '%d-%m-%Y'))
+            
+                if key == 'username':
+                    poemas = poemas.username(PoemaModel.usuario.has(UsuarioModel.username.like('%'+value+'%')))
+            
+            # Order
+                if key == "sort_by":
+                    if value == "usuario":
+                        poemas = poemas.order_by(PoemaModel.usuario)
+                    if value == "usuario[desc]":
+                        poemas = poemas.order_by(PoemaModel.usuario.desc())
+                    if value == "fecha_hora":
+                        poemas == poemas.order_by(PoemaModel.fecha_hora)
+                    if value == "fecha_hora[desc]":
+                        poemas = poemas.order_by(PoemaModel.fecha_hora.desc())
+                    if value == "calificaciones":
+                        poemas = poemas.outerjoin(PoemaModel.calificaciones).group_by(PoemaModel.id).order_by(func.mean(PoemaModel.resultado))
+                    if value == "calificaciones[desc]":
+                        poemas = poemas.outerjoin(PoemaModel.calificaciones).group_by(PoemaModel.id).order_by(func.mean(PoemaModel.resultado).desc())
             
             
 
         
-        poemas = poemas.paginate(page= page, per_page=per_page, error_out=False,)
+        poemas = poemas.paginate(page= page, per_page=per_page, error_out=False)
         if "rol" in claims:
             if claims["rol"] == "admin":
                 return jsonify({
@@ -120,13 +120,14 @@ class Poemas(Resource):
                     "page" : page
                     })
         
-            else:
-                return jsonify({
-                    "poemas" : [poema.to_json_short() for poema in poemas.items],
-                    "total" : poemas.total,
-                    "pages" : poemas.pages,
-                    "page" : page
-                    })
+            
+        else:
+            return jsonify({
+                "poemas" : [poema.to_json_short() for poema in poemas.items],
+                "total" : poemas.total,
+                "pages" : poemas.pages,
+                "page" : page
+                })
             
 
     @jwt_required()
@@ -140,14 +141,14 @@ class Poemas(Resource):
         claims = get_jwt()
         if "rol" in claims:
             if claims["rol"] == "poeta":
-                if len(usuario.poemas) == 0 or len(usuario.calificaciones) >= 2:
-                    poema.usuario_id = id_usuario
-                    db.session.add(poema)
-                    print("aaa")
-                    db.session.commit()
-                    return poema.to_json(), 201
-                else:
-                    return "No hay suficientes calificaciones por parte de este usuario"
+                
+                poema.usuario_id = id_usuario
+                db.session.add(poema)
+                print("aaa")
+                db.session.commit()
+                return poema.to_json(), 201
+                
+                    
             else:
                 return "Este usuario no puede realizar esta acción."
         

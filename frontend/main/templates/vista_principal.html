@@ -12,63 +12,22 @@
           <h3>Poemas</h3>
         </div>
         <div class = "row">
+          {% for poema in poemas  %}
         <div class="col-md-3">
           <div class="card">
             <img src="https://via.placeholder.com/100x100" class="card-img-top" alt="...">
             <div class="d-grid gap-2">
-              <h5 class="card-title">Nombre:</h5>
-              <h5 class="card-title">Poema:</h5>
-              <h5 class="card-title">Promedio:</h5>
-              <h5 class="card-title">Puntaje:</h5>
+              <h5 class="card-title">Nombre: {{poema.titulo}}</h5>
+            
               <a href="vista_detallada.html" class="btn btn-primary">Ver Poema</a>
               
              </div>
              </div>
           </div>
-          <div class="col-md-3">
-            <div class="card">
-              <img src="https://via.placeholder.com/100x100" class="card-img-top" alt="...">
-              <div class="d-grid gap-2">
-                <h5 class="card-title">Nombre:</h5>
-              <h5 class="card-title">Poema:</h5>
-              <h5 class="card-title">Promedio:</h5>
-              <h5 class="card-title">Puntaje:</h5>
-                
-                <a href="vista_detallada.html" class="btn btn-primary">Ver Poema</a>
-               </div>
-               </div>
-         </div>
-         <div class="col-md-3">
-            <div class="card">
-              <img src="https://via.placeholder.com/100x100" class="card-img-top" alt="...">
-              <div class="d-grid gap-2">
-                <h5 class="card-title">Nombre:</h5>
-              <h5 class="card-title">Poema:</h5>
-              <h5 class="card-title">Promedio:</h5>
-              <h5 class="card-title">Puntaje:</h5>
-                <a href="vista_detallada.html" class="btn btn-primary">Ver Poema</a>
-                <div class="d-grid gap-2">
+          
+          {% endfor %}
                     
-               </div>
-               </div>
-               </div>
-         </div>
-         
-         <div class="col-md-3">
-            <div class="card">
-              <img src="https://via.placeholder.com/100x100" class="card-img-top" alt="...">
-              <div class="d-grid gap-2">
-                <h5 class="card-title">Nombre:</h5>
-              <h5 class="card-title">Poema:</h5>
-              <h5 class="card-title">Promedio:</h5>
-              <h5 class="card-title">Puntaje:</h5>
-                <a href="vista_detallada.html" class="btn btn-primary">Ver Poema</a>
-                <div class="d-grid gap-2">
-                    
-               </div>
-               </div>
-               </div>
-         </div>
+    
 
          
   

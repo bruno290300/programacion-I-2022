@@ -8,14 +8,12 @@ app = Blueprint('app', __name__, url_prefix='/')
 @app.route('/')
 def index():
     api_url = "http://127.0.0.1:5000/poemas"
-    data = { "page": 1, "per_page": 10 }
+    data = { "page": 1, "per_page": 4 }
     headers = { "Content-Type": "application/json", "Authorization": f'Bearer {request.cookies.get("jwt")}' }
     response = requests.get(api_url, json=data, headers=headers)
-    print(response.status_code)  
-    print(response.text)
     poemas = json.loads(response.text)
     print(poemas)
-    return render_template('vista_principal.html')
+    return render_template('vista_principal.html', poemas=poemas['poemas'])
 
 
 
@@ -34,17 +32,22 @@ def login():
         print(response.status_code)
         print(response.text)
 
-        token = json.loads(response.text)
-        token = token["access_token"]
-        print(token)
-        resp = make_response(render_template("vista_principal.html"))
+        lista = json.loads(response.text)
+        
+        token = lista["access_token"]
+        
+        id = lista["id"]
+        print(id)
+        resp = make_response(redirect(url_for('app.index')))
 
         resp.set_cookie("jwt",token)
+        resp.set_cookie("id",id)
 
         return resp
 
     else:
         return render_template('login.html')
+
 
     
 
@@ -55,7 +58,16 @@ def register():
 
 @app.route('/mi-perfil')
 def mi_perfil():
-    return render_template('mi_perfil.html')
+    id = request.cookies.get("id")
+    api_url = f"http://127.0.0.1:5000/usuario/{id}"
+    headers = { "Content-Type": "application/json", "Authorization": f'Bearer {request.cookies.get("jwt")}' }
+    response = requests.get(api_url, headers=headers)
+    usuario = json.loads(response.text)
+    print(usuario)
+
+
+
+    return render_template('mi_perfil.html', usuario=usuario)
 
 @app.route('/lista-poemas')
 def lista_poemas():
