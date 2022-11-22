@@ -31,20 +31,21 @@ def login():
         response = requests.post(api_url, json=data, headers=headers)
         print(response.status_code)
         print(response.text)
+        if response.status_code == 200:
+            lista = json.loads(response.text)
+            
+            token = lista["access_token"]
+            
+            id = lista["id"]
+            print(id)
+            resp = make_response(redirect(url_for('app.index')))
 
-        lista = json.loads(response.text)
-        
-        token = lista["access_token"]
-        
-        id = lista["id"]
-        print(id)
-        resp = make_response(redirect(url_for('app.index')))
+            resp.set_cookie("jwt",token)
+            resp.set_cookie("id",id)
 
-        resp.set_cookie("jwt",token)
-        resp.set_cookie("id",id)
-
-        return resp
-
+            return resp
+        else:
+            return render_template('login.html', error=response.text)
     else:
         return render_template('login.html')
 
@@ -73,3 +74,68 @@ def mi_perfil():
 def lista_poemas():
     return render_template('lista_poemas.html')
 
+@app.route('/logout')
+def logout():
+    resp = make_response(redirect(url_for('login')))
+    resp.set_cookie("jwt", "", expires=0)
+    return resp
+
+@app.route('/crear-poema', methods=['GET', 'POST'])
+def crear_poema():
+    if request.method == 'POST':
+        titulo = request.form.get('titulo')
+        cuerpo = request.form.get('cuerpo')
+        api_url = "http://127.0.0.1:5000/poemas"
+        id = request.cookies.get("id")
+        data = {"titulo": titulo, "cuerpo": cuerpo, "usuarioId": id}
+        jwt = request.cookies.get("jwt")
+        headers = {"Content-Type": "application/json", "Authorization": f'Bearer {jwt}'}
+        response = requests.post(api_url, json=data, headers=headers)
+        if response.ok:
+            return redirect(url_for('app.index'))
+        else:
+            return redirect(url_for('app.crear_poema'))
+
+    return render_template('crear_poema.html')
+
+
+@app.route('/editar-poema/<int:id>', methods=['GET', 'POST'])
+def editar_poema(id):
+    if request.method == 'POST':
+        titulo = request.form.get('titulo')
+        cuerpo = request.form.get('cuerpo')
+        api_url = f"http://127.0.0.1:5000/poema/{id}"
+        id = request.cookies.get("id")
+        data = {"titulo": titulo, "cuerpo": cuerpo}
+        jwt = request.cookies.get("jwt")
+        headers = {"Content-Type": "application/json", "Authorization": f'Bearer {jwt}'}
+        response = requests.put(api_url, json=data, headers=headers)
+        if response.ok:
+            return redirect(url_for('app.index'))
+        else:
+            return redirect(url_for('app.index'))
+        
+
+    api_url = f"http://127.0.0.1:5000/poema/{id}"
+    jwt = request.cookies.get("jwt")
+    headers = {"Content-Type": "application/json", "Authorization": f'Bearer {jwt}'}
+    response = requests.get(api_url, headers=headers)
+    poema = json.loads(response.text)
+    print(poema)
+    return render_template('editar_poema.html', poema=poema)
+
+
+@app.route('/eliminar-poema/<int:id>')
+def eliminar_poema(id):
+    api_url = "http://127.0.0.1:5000/poema/"+str(id)
+    headers = { "Content-Type": "application/json", "Authorization": f'Bearer {request.cookies.get("jwt")}' }
+    response = requests.delete(api_url, headers=headers)
+
+    return make_response(redirect(url_for('app.index')))
+    
+
+
+
+    
+    
+       

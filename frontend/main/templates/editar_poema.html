@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">  
+    <form action="{{ url_for('app.editar_poema',id=poema.id) }}" method="POST">
+        <div class="form-group">
+            <label for="texto">Titulo</label>
+            <textarea name="titulo" class="form-control">{{poema.titulo}}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="area">Cuerpo</label>
+            <textarea name="cuerpo" rows="10" cols="40"  class="form-control">{{poema.cuerpo}}</textarea>
+        </div>
+        <div class="container justify-content-center mt-3">
+            <div class="row">
+                <input type="submit"  class="btn btn-primary" value="Modify">
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

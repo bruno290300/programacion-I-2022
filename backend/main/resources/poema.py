@@ -28,16 +28,25 @@ class Poema(Resource):
                 return "Este usuario no puede realizar esa acción"
 
 
-
-'''
+    @jwt_required() #Requisito de admin o usuario para ejecutar esta función. Obligatorio Token
     def put(self, id):
-        if int(id) in POEMAS:
-            poema = POEMAS[int(id)]
-            data = request.get_json()
-            poema.update(data)
-            return poema, 201
-        return '', 404
-'''
+
+        #Obtener claims de adentro del JWT
+        claims = get_jwt()
+
+        poem = db.session.query(PoemaModel).get_or_404(id)
+
+        #Verifico si el id del usuario concuerda con el que realiza la modificación o si es admin.
+        if (claims['id'] == poem.usuarioId or claims['rol'] == "admin"):
+            data = request.get_json().items()
+            for key, value in data:
+                setattr(poem, key, value)
+            db.session.add(poem)
+            db.session.commit()
+            return poem.to_json(), 201
+        else:
+            return 'No tiene rol', 403
+
 
 class Poemas(Resource):
     @jwt_required(optional=True)
@@ -111,23 +120,14 @@ class Poemas(Resource):
 
         
         poemas = poemas.paginate(page= page, per_page=per_page, error_out=False)
-        if "rol" in claims:
-            if claims["rol"] == "admin":
-                return jsonify({
-                    "poemas" : [poema.to_json_short() for poema in poemas.items],
-                    "total" : poemas.total,
-                    "pages" : poemas.pages,
-                    "page" : page
-                    })
+        return jsonify({
+            "poemas" : [poema.to_json_short() for poema in poemas.items],
+            "total" : poemas.total,
+            "pages" : poemas.pages,
+            "page" : page
+            })
         
-            
-        else:
-            return jsonify({
-                "poemas" : [poema.to_json_short() for poema in poemas.items],
-                "total" : poemas.total,
-                "pages" : poemas.pages,
-                "page" : page
-                })
+        
             
 
     @jwt_required()
@@ -135,22 +135,39 @@ class Poemas(Resource):
         id_usuario = get_jwt_identity()
         
         poema = PoemaModel.from_json(request.get_json())
-        
-        #print(poema.promedio_puntaje())
+        poema.usuarioId = id_usuario
         usuario = db.session.query(UsuarioModel).get_or_404(id_usuario)
         claims = get_jwt()
+
         if "rol" in claims:
-            if claims["rol"] == "poeta":
-                
+            if claims["rol"] == "poeta" or claims["rol"] == "admin":
                 poema.usuario_id = id_usuario
                 db.session.add(poema)
-                print("aaa")
                 db.session.commit()
-                return poema.to_json(), 201
-                
+                return poema.to_json(), 201   
                     
             else:
                 return "Este usuario no puede realizar esta acción."
+
+    
+    @jwt_required() #Requisito de admin o usuario para ejecutar esta función. Obligatorio Token
+    def put(self, id):
+
+        #Obtener claims de adentro del JWT
+        claims = get_jwt()
+
+        poem = db.session.query(PoemaModel).get_or_404(id)
+
+        #Verifico si el id del usuario concuerda con el que realiza la modificación o si es admin.
+        if (claims['id'] == poem.usuarioId or claims['rol'] == "admin"):
+            data = request.get_json().items()
+            for key, value in data:
+                setattr(poem, key, value)
+            db.session.add(poem)
+            db.session.commit()
+            return poem.to_json(), 201
+        else:
+            return 'No tiene rol', 403 #La solicitud no incluye información de autenticación
         
         
 
